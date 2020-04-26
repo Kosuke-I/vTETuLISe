@@ -3,43 +3,34 @@
     <div class="display">
       <div class="field">
         <div class="left">
-          <div class="queue holdQueue">
-            hold
-          </div>
+          <div class="queue holdQueue">hold</div>
           <div class="gameInformation">
-            <div class="scoreTitle">
-              SCORE
-            </div>
-            <div class="score">
-              1234567890
-            </div>
-            <div class="timeTitle">
-              TIME
-            </div>
-            <div class="time">
-              00:00:00
-            </div>
-            <div class="linesTitle">
-              LINE:
-            </div>
-            <div class="lines">
-              10
-            </div>
-            <div class="levalTitle">
-              LEVEL:
-            </div>
-            <div class="level">
-              00
-            </div>
-            <div class="goalTitle">
-              GOAL:
-            </div>
-            <div class="tetrisesTitle">
-              TETRISES:
-            </div>
-            <div class="tetrises">
-              00
-            </div>
+            <ul>
+              <div class="box scoreBox">
+                <li class="scoreTitle">SCORE</li>
+                <li class="count scoreCount">1234567890</li>
+              </div>
+              <div class="box timeBox">
+                <li class="timeTitle">TIME</li>
+                <li class="count timeCount">00:00:00</li>
+              </div>
+              <div class="box lineBox">
+                <li class="lineTitle">LINE:</li>
+                <li class="count linesCount">10</li>
+              </div>
+              <div class="box levelBox">
+                <li class="levelTitle">LEVEL:</li>
+                <li class="count levelCount">00</li>
+              </div>
+              <div class="box goalBox">
+                <li class="goalTitle">GOAL:</li>
+                <li class="count goalCount">00</li>
+              </div>
+              <div class="box tetliseBox">
+                <li class="tetriseTitle">TETRISES:</li>
+                <li class="count tetrisesCount">00</li>
+              </div>
+            </ul>
           </div>
         </div>
         <div class="center">
@@ -306,6 +297,11 @@
 </script>
 
 <style>
+
+li {
+  list-style: none;
+}
+
 .display {
   height: 100vh;
   width: 100vw;
@@ -313,9 +309,46 @@
   background-color: #B2B3B2;
 }
 
+.field {
+  display: flex;
+  justify-content: center;
+  width: 80%;
+  margin: auto;
+  padding-top: 20px;
+}
+
+.left {
+  margin-right: 10px;
+}
+
 .queue {
   width: 100px;
   height: 100px;
   background-color: white;
 }
+
+.holdQueue {
+  margin-left: auto;
+}
+
+.gameInformation {
+  margin-top: 20px;
+}
+
+.box {
+  margin-bottom: 8px;
+}
+
+.count {
+  font-weight: bold;
+}
+
+.right {
+  margin-left: 10px;
+}
+
+.afterQueue {
+  margin-top: 20px;
+}
+
 </style>
