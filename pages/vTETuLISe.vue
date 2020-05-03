@@ -157,7 +157,7 @@ export default {
         x: 10,
         y: 20
       },
-      blocks: {
+      block: {
         // ブロックタイプ
         type: '',
         data: [],
@@ -173,23 +173,23 @@ export default {
      * フィールド画面の表示
      */
     display() {
-      //ボードのコピー
+      // ボードのコピー
       const field = JSON.parse(JSON.stringify(this.field.data));
-      if (this.blocks.data.length === 0) {
+      if (this.block.data.length === 0) {
         return field;
       }
-      //ブロックの描画switch
-      for (let h = 0; h < this.blocks.data.length; h++) {
-        for (let v = 0; v < this.blocks.data[h].length; v++) {
-          const y = this.blocks.y + h;
-          const x = this.blocks.x + v;
+      // ブロックの描画switch
+      for (let h = 0; h < this.block.data.length; h++) {
+        for (let v = 0; v < this.block.data[h].length; v++) {
+          const y = this.block.y + h;
+          const x = this.block.x + v;
           if (y < 0 || x < 0 || y > this.field.y - 1 || x > this.field.x - 1) {
             continue;
           }
-          if (this.blocks.data[h][v] === 0) {
+          if (this.block.data[h][v] === 0) {
             continue;
           }
-          field[h + this.blocks.y][v + this.blocks.x] = this.blocks.data[h][v];
+          field[h + this.block.y][v + this.block.x] = this.block.data[h][v];
         }
       }
       return field;
@@ -207,6 +207,9 @@ export default {
      */
     clear() {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
+    },
+    setBlock() {
+
     }
   }
 };
