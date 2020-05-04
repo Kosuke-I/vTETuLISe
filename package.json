@@ -8,8 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
-    "start": "node server.js"
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "express": "^4.17.1",
