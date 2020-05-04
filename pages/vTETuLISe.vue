@@ -223,6 +223,12 @@ export default {
     this.clear();
     this.setBlock();
   },
+  mounted() {
+    window.addEventListener("keydown", this.handleKeydown);
+  },
+  beforeDestroy() {
+    window.removeEventListener("keydown", this.handleKeydown);
+  },
   // メソッド
   methods: {
     /**
@@ -239,6 +245,29 @@ export default {
       // while (this.isOverlap()) {
       //   this.block.y -= 1;
       // }
+    },
+    // キー設定
+    handleKeydown(event) {
+      // 右移動（→）
+      if (event.keyCode === 39) {
+        this.right();
+      }
+      // 左移動（←）
+      else if (event.keyCode === 37) {
+        this.left();
+      }
+      // 回転移動（↑）
+      else if (event.keyCode === 38) {
+        this.rotate();
+      }
+      // 下移動（↓）
+      else if (event.keyCode === 40) {
+        this.softDrop();
+      }
+      // 最下移動（space）
+      else if (event.keyCode === 32) {
+        this.hardDrop();
+      }
     }
   }
 };
