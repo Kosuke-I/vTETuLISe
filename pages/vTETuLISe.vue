@@ -1,155 +1,177 @@
 <template>
-  <div id="app">
-    <div class="display">
-      <div class="field">
-        <div class="left">
-          <div class="queue holdQueue">
-            hold
-          </div>
-          <div class="gameInformation">
-            <ul>
-              <div class="box scoreBox">
-                <li class="scoreTitle">
-                  SCORE
-                </li>
-                <li class="count scoreCount">
-                  1234567890
-                </li>
-              </div>
-              <div class="box timeBox">
-                <li class="timeTitle">
-                  TIME
-                </li>
-                <li class="count timeCount">
-                  00:00:00
-                </li>
-              </div>
-              <div class="box lineBox">
-                <li class="lineTitle">
-                  LINE:
-                </li>
-                <li class="count linesCount">
-                  10
-                </li>
-              </div>
-              <div class="box levelBox">
-                <li class="levelTitle">
-                  LEVEL:
-                </li>
-                <li class="count levelCount">
-                  00
-                </li>
-              </div>
-              <div class="box goalBox">
-                <li class="goalTitle">
-                  GOAL:
-                </li>
-                <li class="count goalCount">
-                  00
-                </li>
-              </div>
-              <div class="box tetliseBox">
-                <li class="tetriseTitle">
-                  TETRISES:
-                </li>
-                <li class="count tetrisesCount">
-                  00
-                </li>
-              </div>
-            </ul>
-          </div>
+<div id="app">
+  <div class="display">
+    <div class="field">
+      <div class="left">
+        <div class="queue holdQueue">
+          hold
         </div>
-        <div class="center">
-          <div class="matrix">
-            <table>
-              <tr
-                v-for="(line, i) in display"
-                :key="i"
-              >
-                <td
-                  v-for="(block, j) in line"
-                  :key="j"
-                  class="block"
-                  :class="line | blockClass"
-                />
-              </tr>
-            </table>
-          </div>
+        <div class="gameInformation">
+          <ul>
+            <div class="box scoreBox">
+              <li class="scoreTitle">
+                SCORE
+              </li>
+              <li class="count scoreCount">
+                1234567890
+              </li>
+            </div>
+            <div class="box timeBox">
+              <li class="timeTitle">
+                TIME
+              </li>
+              <li class="count timeCount">
+                00:00:00
+              </li>
+            </div>
+            <div class="box lineBox">
+              <li class="lineTitle">
+                LINE:
+              </li>
+              <li class="count linesCount">
+                10
+              </li>
+            </div>
+            <div class="box levelBox">
+              <li class="levelTitle">
+                LEVEL:
+              </li>
+              <li class="count levelCount">
+                00
+              </li>
+            </div>
+            <div class="box goalBox">
+              <li class="goalTitle">
+                GOAL:
+              </li>
+              <li class="count goalCount">
+                00
+              </li>
+            </div>
+            <div class="box tetliseBox">
+              <li class="tetriseTitle">
+                TETRISES:
+              </li>
+              <li class="count tetrisesCount">
+                00
+              </li>
+            </div>
+          </ul>
         </div>
-        <div class="right">
-          <div class="queue nextQueue">
-            next
-          </div>
-          <div class="queue afterQueue">
-            afterQueue
-          </div>
+      </div>
+      <div class="center">
+        <div class="matrix">
+          <table>
+            <tr v-for="(line, i) in display" :key="i">
+              <!-- mustaches展開 -->
+              <td v-for="(cell, j) in line" :key="j" class="block" :class="cell | blockClass" />
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="right">
+        <div class="queue nextQueue">
+          next
+        </div>
+        <div class="queue afterQueue">
+          afterQueue
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 // テトリミノ
 const tetrimino = {
-  ZERO: [
+  'ZERO': [
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ],
-  I: [
+  // I Tetrimino
+  1: [
     [0, 0, 1, 0, 0],
     [0, 0, 1, 0, 0],
     [0, 0, 1, 0, 0],
     [0, 0, 1, 0, 0],
     [0, 0, 0, 0, 0]
   ],
-  O: [
+  // O Tetrimino
+  2: [
     [0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0]
-  ],
-  T: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 1, 1, 1, 0],
+    [0, 0, 2, 2, 0],
+    [0, 0, 2, 2, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ],
-  J: [
+  // T Tetrimino
+  3: [
     [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0]
-  ],
-  L: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0]
-  ],
-  S: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 1, 1, 0, 0],
+    [0, 0, 3, 0, 0],
+    [0, 3, 3, 3, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ],
-  Z: [
+  // J Tetrimino
+  4: [
     [0, 0, 0, 0, 0],
-    [0, 1, 1, 0, 0],
-    [0, 0, 1, 1, 0],
+    [0, 0, 4, 0, 0],
+    [0, 0, 4, 0, 0],
+    [0, 4, 4, 0, 0],
+    [0, 0, 0, 0, 0]
+  ],
+  // L Tetrimino
+  5: [
+    [0, 0, 0, 0, 0],
+    [0, 0, 5, 0, 0],
+    [0, 0, 5, 0, 0],
+    [0, 0, 5, 5, 0],
+    [0, 0, 0, 0, 0]
+  ],
+  // S Tetrimino
+  6: [
+    [0, 0, 0, 0, 0],
+    [0, 0, 6, 6, 0],
+    [0, 6, 6, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
+  ],
+  // Z Tetrimino
+  7: [
+    [0, 0, 0, 0, 0],
+    [0, 7, 7, 0, 0],
+    [0, 0, 7, 7, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ]
 };
 export default {
+  filters: {
+    blockClass(val) {
+      switch (val) {
+        case 1:
+          return 'tetrimino-i';
+        case 2:
+          return 'tetrimino-o';
+        case 3:
+          return 'tetrimino-t';
+        case 4:
+          return 'tetrimino-j';
+        case 5:
+          return 'tetrimino-l';
+        case 6:
+          return 'tetrimino-s';
+        case 7:
+          return 'tetrimino-z';
+        default:
+          return '';
+      }
+    }
+  },
   data: function() {
     return {
       field: {
@@ -159,7 +181,7 @@ export default {
       },
       block: {
         // ブロックタイプ
-        type: '',
+        type: 1,
         data: [],
         // x軸座標
         x: 0,
@@ -192,13 +214,14 @@ export default {
           field[h + this.block.y][v + this.block.x] = this.block.data[h][v];
         }
       }
+      console.error('field', field);
       return field;
     }
   },
   // ライフサイクル
   created() {
     this.clear();
-    console.error('field.data', this.field.data);
+    this.setBlock();
   },
   // メソッド
   methods: {
@@ -209,7 +232,13 @@ export default {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
     },
     setBlock() {
-
+      console.log(`block`, this.block)
+      this.block.x = 5;
+      this.block.y = this.block.type === 1 ? 5 : -1;
+      this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
+      // while (this.isOverlap()) {
+      //   this.block.y -= 1;
+      // }
     }
   }
 };
@@ -253,6 +282,40 @@ td {
 
 .left {
   margin-right: 10px;
+}
+
+.block {
+  width: var(--field-block);
+  height: var(--field-block);
+  background-color: white;
+}
+
+.tetrimino-i {
+  background: #3498db;
+}
+
+.tertimino-o {
+  background: #f1c40f;
+}
+
+.tertimino-t {
+  background: #9b59b6;
+}
+
+.tertimino-j {
+  background: #1e3799;
+}
+
+.tertimino-l {
+  background: #e67e22;
+}
+
+.tertimino-s {
+  background: #2ecc71;
+}
+
+.tetrimino-z {
+  background: #e74c3c;
 }
 
 .queue {
