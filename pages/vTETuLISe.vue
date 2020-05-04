@@ -214,7 +214,6 @@ export default {
           field[h + this.block.y][v + this.block.x] = this.block.data[h][v];
         }
       }
-      console.error('field', field);
       return field;
     }
   },
@@ -238,7 +237,6 @@ export default {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
     },
     setBlock() {
-      console.log(`block`, this.block)
       this.block.x = 5;
       this.block.y = this.block.type === 1 ? 5 : -1;
       this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
@@ -246,11 +244,41 @@ export default {
       //   this.block.y -= 1;
       // }
     },
-    // キー設定
+    /**
+     * 右移動
+     */
+    right() {
+      // TODO #3 移動可否判定を実装する
+      this.block.x += 1;
+    },
+    /**
+     * 左移動
+     */
+    left() {
+      // TODO #3 移動可否判定を実装する
+      this.block.x -= 1;
+    },
+    /**
+     * 下移動（ソフトドロップ）
+     */
+    softDrop() {
+      // TODO #3 移動可否判定を実装する
+      this.block.y += 1;
+    },
+    /**
+     * 最下移動（ハードドロップ）
+     */
+    hardDrop() {
+      while (this.hardDrop()) {}
+    },
+    /**
+     * キー設定
+     * @param event イベント
+     */
     handleKeydown(event) {
-      // 右移動（→）
-      if (event.keyCode === 39) {
-        this.right();
+      // 最下移動（space）
+      if (event.keyCode === 32) {
+        this.hardDrop();
       }
       // 左移動（←）
       else if (event.keyCode === 37) {
@@ -258,15 +286,15 @@ export default {
       }
       // 回転移動（↑）
       else if (event.keyCode === 38) {
-        this.rotate();
+        // this.rotate();
+      }
+      // 右移動（→）
+      else if (event.keyCode === 39) {
+        this.right();
       }
       // 下移動（↓）
       else if (event.keyCode === 40) {
         this.softDrop();
-      }
-      // 最下移動（space）
-      else if (event.keyCode === 32) {
-        this.hardDrop();
       }
     }
   }
