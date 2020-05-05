@@ -329,6 +329,31 @@ export default {
       }
     },
     /**
+     * 回転
+     * @return {[type]} [description]
+     */
+    rotate() {
+      // O型は回転しない
+      if (this.block.type === 2) {
+        return;
+      }
+
+      // 回転後のブロック生成
+      const rotatedTetrimino = JSON.parse(JSON.stringify(this.block.data));
+      for (let h = 0; h < rotatedTetrimino.length; h++) {
+        for (let v = 0; v < rotatedTetrimino[h].length; v++) {
+          rotatedTetrimino[rotatedTetrimino.length - v - 1][h] = this.block.data[h][v];
+        }
+      }
+
+      // 回転可否判定
+      if (!this.canMove(rotatedTetrimino, this.block.x, this.block.y)) {
+        return;
+      }
+
+      this.block.data = rotatedTetrimino;
+    },
+    /**
      * キー設定
      * @param event イベント
      */
@@ -343,7 +368,7 @@ export default {
       }
       // 回転移動（↑）
       else if (event.keyCode === 38) {
-        // this.rotate();
+        this.rotate();
       }
       // 右移動（→）
       else if (event.keyCode === 39) {
