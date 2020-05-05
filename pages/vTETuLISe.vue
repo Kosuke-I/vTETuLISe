@@ -196,7 +196,8 @@ export default {
         // y軸座標
         y: 0
       },
-      isInterval: true
+      isInterval: true,
+      next: 0
     };
   },
   computed: {
@@ -250,8 +251,8 @@ export default {
      * テトリミノの表示
      */
     setBlock() {
-      this.block.x = 1;
-      this.block.y = this.block.type === 1 ? 1 : -1;
+      this.block.x = 2;
+      this.block.y = this.block.type === 1 ? 0 : -1;
       this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
       // while (this.isOverlap()) {
       //   this.block.y -= 1;
@@ -317,10 +318,17 @@ export default {
      * 下移動（ソフトドロップ）
      */
     softDrop() {
-      if (!this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
-        return;
+      if (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+        this.block.y += 1;
+        this.stopDropDown;
+        return true;
       }
-      this.block.y += 1;
+      // 最下端にたどり着いたら、フィールドの更新
+      this.field.data = JSON.parse(JSON.stringify(this.display));
+      // 次のテトリミノを配置
+      this.setTetorimino();
+      // TODO #6 自動落下させる 削除予定
+      this.dropDown;
     },
     /**
      * 最下移動（ハードドロップ）
@@ -332,7 +340,6 @@ export default {
     },
     /**
      * 回転
-     * @return {[type]} [description]
      */
     rotate() {
       // O型は回転しない
@@ -388,8 +395,27 @@ export default {
     dropDown() {
       this.isInterval = setInterval(this.softDrop, 1000);
     },
+    /**
+     * 自動落下の停止
+     */
     stopDropDown() {
       clearInterval(this.isInterval);
+    },
+    /**
+     * 次のテトリミノの設定
+     */
+    setNext() {
+      this.next = Math.floor(Math.random() * 7) + 1;
+      this.block.type = this.next;
+    },
+    /**
+     * テトリミノの配置
+     */
+    setTetorimino() {
+      // 次のテトリミノの設定
+      this.setNext();
+      console.log(this.block.type);
+      this.setBlock();
     }
   }
 };
@@ -444,23 +470,23 @@ td {
   background: #3498db;
 }
 
-.tertimino-o {
+.tetrimino-o {
   background: #f1c40f;
 }
 
-.tertimino-t {
+.tetrimino-t {
   background: #9b59b6;
 }
 
-.tertimino-j {
+.tetrimino-j {
   background: #1e3799;
 }
 
-.tertimino-l {
+.tetrimino-l {
   background: #e67e22;
 }
 
-.tertimino-s {
+.tetrimino-s {
   background: #2ecc71;
 }
 
