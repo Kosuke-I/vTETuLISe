@@ -195,7 +195,8 @@ export default {
         x: 0,
         // y軸座標
         y: 0
-      }
+      },
+      isInterval: true
     };
   },
   computed: {
@@ -232,6 +233,7 @@ export default {
   },
   mounted() {
     window.addEventListener('keydown', this.handleKeydown);
+    this.dropDown();
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.handleKeydown);
@@ -248,8 +250,8 @@ export default {
      * テトリミノの表示
      */
     setBlock() {
-      this.block.x = 5;
-      this.block.y = this.block.type === 1 ? 5 : -1;
+      this.block.x = 1;
+      this.block.y = this.block.type === 1 ? 1 : -1;
       this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
       // while (this.isOverlap()) {
       //   this.block.y -= 1;
@@ -378,6 +380,16 @@ export default {
       else if (event.keyCode === 40) {
         this.softDrop();
       }
+    },
+    /**
+     * 自動落下
+     * 一定間隔ごとにメソッドを実行
+     */
+    dropDown() {
+      this.isInterval = setInterval(this.softDrop, 1000);
+    },
+    stopDropDown() {
+      clearInterval(this.isInterval);
     }
   }
 };
