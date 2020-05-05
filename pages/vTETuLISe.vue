@@ -244,6 +244,9 @@ export default {
     clear() {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
     },
+    /**
+     * テトリミノの表示
+     */
     setBlock() {
       this.block.x = 5;
       this.block.y = this.block.type === 1 ? 5 : -1;
@@ -253,31 +256,77 @@ export default {
       // }
     },
     /**
+     * 移動可否判定
+     * @param  Array block アクティブテトリミノ
+     * @param  int   x     アクティブテトリミノのx座標
+     * @param  int   y     アクティブテトリミノのy座標
+     * @return false       移動不可
+     */
+    canMove(block, x, y) {
+      for (let h = 0; h < block.length; h++) {
+        for (let v = 0; v < block[h].length; v++) {
+          //左端判定
+          if (x + v < 0 && block[h][v] > 0) {
+            return false;
+          }
+          //右端判定
+          if (x + v > this.field.x - 1 && block[h][v] > 0) {
+            return false;
+          }
+          //下端判定
+          if (y + h > this.field.y - 1 && block[h][v] > 0) {
+            return false;
+          }
+          //上端判定
+          if (y + h < 0 && block[h][v] > 0) {
+            return false;
+          }
+          //ボード外の座標は無視
+          if (x + v < 0 || x + v > this.field.x - 1 || y + h > this.field.y - 1 || y + h < 0) {
+            continue;
+          }
+          //ブロック判定
+          if (this.field.data[y + h][x + v] > 0 && block[h][v] > 0) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    /**
      * 右移動
      */
     right() {
-      // TODO #3 移動可否判定を実装する
+      if (!this.canMove(this.block.data, this.block.x + 1, this.block.y)) {
+        return;
+      }
       this.block.x += 1;
     },
     /**
      * 左移動
      */
     left() {
-      // TODO #3 移動可否判定を実装する
+      if (!this.canMove(this.block.data, this.block.x - 1, this.block.y)) {
+        return;
+      }
       this.block.x -= 1;
     },
     /**
      * 下移動（ソフトドロップ）
      */
     softDrop() {
-      // TODO #3 移動可否判定を実装する
+      if (!this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+        return;
+      }
       this.block.y += 1;
     },
     /**
      * 最下移動（ハードドロップ）
      */
     hardDrop() {
-      while (this.hardDrop()) {}
+      while (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+        this.softDrop();
+      }
     },
     /**
      * キー設定
