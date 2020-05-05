@@ -1,85 +1,93 @@
 <template>
-<div id="app">
-  <div class="display">
-    <div class="field">
-      <div class="left">
-        <div class="queue holdQueue">
-          hold
+  <div id="app">
+    <div class="display">
+      <div class="field">
+        <div class="left">
+          <div class="queue holdQueue">
+            hold
+          </div>
+          <div class="gameInformation">
+            <ul>
+              <div class="box scoreBox">
+                <li class="scoreTitle">
+                  SCORE
+                </li>
+                <li class="count scoreCount">
+                  1234567890
+                </li>
+              </div>
+              <div class="box timeBox">
+                <li class="timeTitle">
+                  TIME
+                </li>
+                <li class="count timeCount">
+                  00:00:00
+                </li>
+              </div>
+              <div class="box lineBox">
+                <li class="lineTitle">
+                  LINE:
+                </li>
+                <li class="count linesCount">
+                  10
+                </li>
+              </div>
+              <div class="box levelBox">
+                <li class="levelTitle">
+                  LEVEL:
+                </li>
+                <li class="count levelCount">
+                  00
+                </li>
+              </div>
+              <div class="box goalBox">
+                <li class="goalTitle">
+                  GOAL:
+                </li>
+                <li class="count goalCount">
+                  00
+                </li>
+              </div>
+              <div class="box tetliseBox">
+                <li class="tetriseTitle">
+                  TETRISES:
+                </li>
+                <li class="count tetrisesCount">
+                  00
+                </li>
+              </div>
+            </ul>
+          </div>
         </div>
-        <div class="gameInformation">
-          <ul>
-            <div class="box scoreBox">
-              <li class="scoreTitle">
-                SCORE
-              </li>
-              <li class="count scoreCount">
-                1234567890
-              </li>
-            </div>
-            <div class="box timeBox">
-              <li class="timeTitle">
-                TIME
-              </li>
-              <li class="count timeCount">
-                00:00:00
-              </li>
-            </div>
-            <div class="box lineBox">
-              <li class="lineTitle">
-                LINE:
-              </li>
-              <li class="count linesCount">
-                10
-              </li>
-            </div>
-            <div class="box levelBox">
-              <li class="levelTitle">
-                LEVEL:
-              </li>
-              <li class="count levelCount">
-                00
-              </li>
-            </div>
-            <div class="box goalBox">
-              <li class="goalTitle">
-                GOAL:
-              </li>
-              <li class="count goalCount">
-                00
-              </li>
-            </div>
-            <div class="box tetliseBox">
-              <li class="tetriseTitle">
-                TETRISES:
-              </li>
-              <li class="count tetrisesCount">
-                00
-              </li>
-            </div>
-          </ul>
+        <div class="center">
+          <div class="matrix">
+            <table>
+              <tr
+                v-for="(line, i) in display"
+                :key="i"
+              >
+                <!-- mustaches展開 -->
+                <td
+                  v-for="(cell, j) in line"
+                  :key="j"
+                  class="block"
+                  :class="cell | blockClass"
+                />
+              </tr>
+            </table>
+          </div>
         </div>
-      </div>
-      <div class="center">
-        <div class="matrix">
-          <table>
-            <tr v-for="(line, i) in display" :key="i">
-              <!-- mustaches展開 -->
-              <td v-for="(cell, j) in line" :key="j" class="block" :class="cell | blockClass" />
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div class="right">
-        <div class="queue nextQueue">
-          next
-        </div>
-        <div class="queue afterQueue">
-          afterQueue
+        <div class="right">
+          <div class="queue nextQueue">
+            next
+          </div>
+          <div class="queue afterQueue">
+            afterQueue
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -223,10 +231,10 @@ export default {
     this.setBlock();
   },
   mounted() {
-    window.addEventListener("keydown", this.handleKeydown);
+    window.addEventListener('keydown', this.handleKeydown);
   },
   beforeDestroy() {
-    window.removeEventListener("keydown", this.handleKeydown);
+    window.removeEventListener('keydown', this.handleKeydown);
   },
   // メソッド
   methods: {
@@ -325,7 +333,6 @@ td {
 .display {
   height: 100vh;
   width: 100vw;
-  min-height: 100vh;
   background-color: #B2B3B2;
 }
 
