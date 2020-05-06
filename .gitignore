@@ -88,3 +88,7 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Heroku
+node_modules/
+.nuxt/he
