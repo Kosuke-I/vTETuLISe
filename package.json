@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "heroku-postbuild": "npm run build",
     "generate": "nuxt generate",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
