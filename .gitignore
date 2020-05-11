@@ -91,4 +91,4 @@ sw.*
 
 # Heroku
 node_modules/
-.nuxt/he
+.nuxt/
