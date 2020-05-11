@@ -6,11 +6,8 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "postinstall": "npm build",
-    "start": "node server.js",
+    "build": "nuxt build",
+    "start": "nuxt start",
     "generate": "nuxt generate"
   },
   "dependencies": {
