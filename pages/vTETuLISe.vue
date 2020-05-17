@@ -199,7 +199,7 @@ export default {
         // y軸座標
         y: 0
       },
-      isInterval: true,
+      intervalId: undefined,
       next: 0
     };
   },
@@ -324,23 +324,21 @@ export default {
      */
     softDrop() {
       if (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
-        this.stopDropDown();
         this.block.y += 1;
+        this.stopDropDown();
         this.dropDown();
-        return true;
+        return;
       }
-      // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
-      this.field.data = JSON.parse(JSON.stringify(this.display));
-      // 次のテトリミノを配置
-      this.setTetorimino();
+      this.updateField();
     },
     /**
      * 最下移動（ハードドロップ）
      */
     hardDrop() {
-      while (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+      while (this.canMove(this.block.data, this.block.x, this.block.y + 1) == true) {
         this.softDrop();
       }
+      this.updateField();
     },
     /**
      * 回転
@@ -397,13 +395,13 @@ export default {
      * 一定間隔ごとにメソッドを実行
      */
     dropDown() {
-      this.isInterval = setInterval(this.softDrop, 1000);
+      this.intervalId = setInterval(this.softDrop, 1000);
     },
     /**
      * 自動落下の停止
      */
     stopDropDown() {
-      clearInterval(this.isInterval);
+      clearInterval(this.intervalId);
     },
     /**
      * 次のテトリミノの設定
@@ -418,8 +416,17 @@ export default {
     setTetorimino() {
       // 次のテトリミノの設定
       this.setNext();
-      console.log(this.block.type);
       this.setBlock();
+    },
+    /**
+     * フィールドの更新
+     */
+    updateField() {
+      this.stopDropDown();
+      // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
+      this.field.data = JSON.parse(JSON.stringify(this.display));
+      // 次のテトリミノを配置
+      this.setTetorimino();
     }
   }
 };
