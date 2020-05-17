@@ -76,6 +76,9 @@
               </tr>
             </table>
           </div>
+          <button @click="start">
+            start
+          </button>
         </div>
         <div class="right">
           <div class="queue nextQueue">
@@ -230,11 +233,9 @@ export default {
   // ライフサイクル
   created() {
     this.clear();
-    this.setBlock();
   },
   mounted() {
     window.addEventListener('keydown', this.handleKeydown);
-    this.dropDown();
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.handleKeydown);
@@ -248,15 +249,19 @@ export default {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
     },
     /**
+     * ゲームの開始
+     */
+    start() {
+      this.setBlock();
+      this.dropDown();
+    },
+    /**
      * テトリミノの表示
      */
     setBlock() {
       this.block.x = 2;
       this.block.y = this.block.type === 1 ? 0 : -1;
       this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
-      // while (this.isOverlap()) {
-      //   this.block.y -= 1;
-      // }
     },
     /**
      * 移動可否判定
@@ -319,16 +324,15 @@ export default {
      */
     softDrop() {
       if (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+        this.stopDropDown();
         this.block.y += 1;
-        this.stopDropDown;
+        this.dropDown();
         return true;
       }
-      // 最下端にたどり着いたら、フィールドの更新
+      // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
       this.field.data = JSON.parse(JSON.stringify(this.display));
       // 次のテトリミノを配置
       this.setTetorimino();
-      // TODO #6 自動落下させる 削除予定
-      this.dropDown;
     },
     /**
      * 最下移動（ハードドロップ）
