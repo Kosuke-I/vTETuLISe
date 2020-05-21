@@ -463,6 +463,8 @@ export default {
       this.stopDropDown();
       // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
       this.field.data = JSON.parse(JSON.stringify(this.displayField));
+      // ラインの削除
+      this.deleteLine();
       // 次のテトリミノを配置
       this.setTetorimino();
       this.dropDown();
@@ -470,7 +472,31 @@ export default {
     // テトリミノのランダム取得
     getRandomBlock() {
       return Math.floor(Math.random() * 7) + 1;
-    }
+    },
+    // ラインの削除
+    deleteLine() {
+      //ライン消し判定
+      const lines = [];
+      for (let y = 0; y < this.field.y; y++) {
+        let c = 1;
+        for (let x = 0; x < this.field.x; x++) {
+          c *= this.field.data[y][x];
+        }
+        if (c > 0) {
+          lines.push(y);
+        }
+      }
+      //ライン消し
+      for (let i = 0; i < lines.length; i++) {
+        const l = lines[i];
+        for (let x = 0; x < this.field.x; x++) {
+          this.field.data[l][x] = 0;
+        }
+        for (let h = l; h > 1; h--) {
+          this.field.data[h] = this.field.data[h - 1];
+        }
+      }
+    },
   }
 };
 </script>
