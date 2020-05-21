@@ -284,6 +284,7 @@ export default {
       this.nextBlock.type = this.getRandomBlock();
       this.setBlock();
       this.dropDown();
+      document.activeElement.blur();
     },
     /**
      * テトリミノの表示
