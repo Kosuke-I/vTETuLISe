@@ -63,7 +63,7 @@
           <div class="matrix">
             <table>
               <tr
-                v-for="(line, i) in display"
+                v-for="(line, i) in displayField"
                 :key="i"
               >
                 <!-- mustaches展開 -->
@@ -76,10 +76,33 @@
               </tr>
             </table>
           </div>
+          <button @click="start">
+            start
+          </button>
         </div>
         <div class="right">
           <div class="queue nextQueue">
-            next
+            <table class="nextQueueTable">
+              <tr class="nextQueueTr">
+                <td class="nextBlock nextQueueTd" />
+                <td class="nextBlock nextQueueTd" />
+                <td class="nextBlock nextQueueTd" />
+                <td class="nextBlock nextQueueTd" />
+                <td class="nextBlock nextQueueTd" />
+              </tr>
+              <tr
+                v-for="(line, i) in displayNextBlock"
+                :key="i"
+                class="nextQueueTr"
+              >
+                <td
+                  v-for="(cell, j) in line"
+                  :key="j"
+                  class="nextBlock nextQueueTd"
+                  :class="cell | blockClass"
+                />
+              </tr>
+            </table>
           </div>
           <div class="queue afterQueue">
             afterQueue
@@ -111,8 +134,8 @@ const tetrimino = {
   // O Tetrimino
   2: [
     [0, 0, 0, 0, 0],
-    [0, 0, 2, 2, 0],
-    [0, 0, 2, 2, 0],
+    [0, 2, 2, 0, 0],
+    [0, 2, 2, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ],
@@ -127,9 +150,9 @@ const tetrimino = {
   // J Tetrimino
   4: [
     [0, 0, 0, 0, 0],
+    [0, 0, 4, 4, 0],
     [0, 0, 4, 0, 0],
     [0, 0, 4, 0, 0],
-    [0, 4, 4, 0, 0],
     [0, 0, 0, 0, 0]
   ],
   // L Tetrimino
@@ -196,14 +219,18 @@ export default {
         // y軸座標
         y: 0
       },
-      isInterval: true
+      nextBlock: {
+        type: 0
+      },
+      intervalId: undefined,
+      next: 0
     };
   },
   computed: {
     /**
      * フィールド画面の表示
      */
-    display() {
+    displayField() {
       // ボードのコピー
       const field = JSON.parse(JSON.stringify(this.field.data));
       if (this.block.data.length === 0) {
@@ -224,16 +251,17 @@ export default {
         }
       }
       return field;
+    },
+    displayNextBlock() {
+      return tetrimino[this.nextBlock.type];
     }
   },
   // ライフサイクル
   created() {
     this.clear();
-    this.setBlock();
   },
   mounted() {
     window.addEventListener('keydown', this.handleKeydown);
-    this.dropDown();
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.handleKeydown);
@@ -245,17 +273,25 @@ export default {
      */
     clear() {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
+      this.stopDropDown();
+    },
+    /**
+     * ゲームの開始
+     */
+    start() {
+      this.clear();
+      this.block.type = this.getRandomBlock();
+      this.nextBlock.type = this.getRandomBlock();
+      this.setBlock();
+      this.dropDown();
     },
     /**
      * テトリミノの表示
      */
     setBlock() {
-      this.block.x = 1;
-      this.block.y = this.block.type === 1 ? 1 : -1;
+      this.block.x = 2;
+      this.block.y = this.block.type === 1 ? 0 : -1;
       this.block.data = JSON.parse(JSON.stringify(tetrimino[this.block.type]));
-      // while (this.isOverlap()) {
-      //   this.block.y -= 1;
-      // }
     },
     /**
      * 移動可否判定
@@ -317,10 +353,13 @@ export default {
      * 下移動（ソフトドロップ）
      */
     softDrop() {
-      if (!this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+      if (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
+        this.block.y += 1;
+        this.stopDropDown();
+        this.dropDown();
         return;
       }
-      this.block.y += 1;
+      this.updateField();
     },
     /**
      * 最下移動（ハードドロップ）
@@ -329,10 +368,10 @@ export default {
       while (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
         this.softDrop();
       }
+      this.updateField();
     },
     /**
      * 回転
-     * @return {[type]} [description]
      */
     rotate() {
       // O型は回転しない
@@ -386,10 +425,50 @@ export default {
      * 一定間隔ごとにメソッドを実行
      */
     dropDown() {
-      this.isInterval = setInterval(this.softDrop, 1000);
+      this.intervalId = setInterval(this.softDrop, 1000);
     },
+    /**
+     * 自動落下の停止
+     */
     stopDropDown() {
-      clearInterval(this.isInterval);
+      clearInterval(this.intervalId);
+    },
+    /**
+     * 次のテトリミノの設定
+     */
+    setNext() {
+      this.block.type = this.nextBlock.type;
+      this.nextBlock.type = this.getRandomBlock();
+    },
+    /**
+     * 次のテトリミノの取得
+     * @return 次のテトリミノのタイプ
+     */
+    getNextBlock() {
+      return tetrimino[this.nextBlock.type];
+    },
+    /**
+     * テトリミノの配置
+     */
+    setTetorimino() {
+      // 次のテトリミノの設定
+      this.setNext();
+      this.setBlock();
+    },
+    /**
+     * フィールドの更新
+     */
+    updateField() {
+      this.stopDropDown();
+      // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
+      this.field.data = JSON.parse(JSON.stringify(this.displayField));
+      // 次のテトリミノを配置
+      this.setTetorimino();
+      this.dropDown();
+    },
+    // テトリミノのランダム取得
+    getRandomBlock() {
+      return Math.floor(Math.random() * 7) + 1;
     }
   }
 };
@@ -398,6 +477,7 @@ export default {
 <style>
 :root {
   --field-block: calc(100vh * 0.045);
+  --next-block: calc(100vh * 0.035);
 }
 
 li {
@@ -409,11 +489,23 @@ table {
   border-collapse: collapse;
 }
 
+table.nextQueueTable {
+  border: 7px #626261 solid;
+  border-collapse: collapse;
+}
+
 tr,
 td {
   border: 1px #626261 solid;
   height: var(--field-block);
   min-width: var(--field-block);
+}
+
+tr.nextQueueTr,
+td.nextQueueTd {
+  border: none;
+  height: var(--next-block);
+  min-width: var(--next-block);
 }
 
 .display {
@@ -440,27 +532,33 @@ td {
   background-color: white;
 }
 
+.nextBlock {
+  width: var(--next-block);
+  height: var(--next-block);
+  background-color: white;
+}
+
 .tetrimino-i {
   background: #3498db;
 }
 
-.tertimino-o {
+.tetrimino-o {
   background: #f1c40f;
 }
 
-.tertimino-t {
+.tetrimino-t {
   background: #9b59b6;
 }
 
-.tertimino-j {
+.tetrimino-j {
   background: #1e3799;
 }
 
-.tertimino-l {
+.tetrimino-l {
   background: #e67e22;
 }
 
-.tertimino-s {
+.tetrimino-s {
   background: #2ecc71;
 }
 
@@ -469,8 +567,8 @@ td {
 }
 
 .queue {
-  width: 100px;
-  height: 100px;
+  height: var(--next-block) * 5;
+  min-width: var(--next-block) * 5;
   background-color: white;
 }
 
