@@ -273,6 +273,7 @@ export default {
      */
     clear() {
       this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
+      this.stopDropDown();
     },
     /**
      * ゲームの開始
@@ -364,7 +365,7 @@ export default {
      * 最下移動（ハードドロップ）
      */
     hardDrop() {
-      while (this.canMove(this.block.data, this.block.x, this.block.y + 1) == true) {
+      while (this.canMove(this.block.data, this.block.x, this.block.y + 1)) {
         this.softDrop();
       }
       this.updateField();
@@ -463,7 +464,7 @@ export default {
       this.field.data = JSON.parse(JSON.stringify(this.displayField));
       // 次のテトリミノを配置
       this.setTetorimino();
-      // this.dropDown();
+      this.dropDown();
     },
     // テトリミノのランダム取得
     getRandomBlock() {
