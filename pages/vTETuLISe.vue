@@ -47,7 +47,7 @@
                   SCORE
                 </li>
                 <li class="scoreData scoreCount">
-                  1234567890
+                  {{ scoreData.score }}
                 </li>
               </div>
               <div class="box timeBox">
@@ -256,11 +256,13 @@ export default {
         name: '',
         gameType: ''
       },
-      score: 0,
-      playTime: 0,
-      deleteLines: 0,
-      level: 0,
-      tetris: 0
+      scoreData: {
+        score: 0,
+        deleteLines: 0,
+        level: 1,
+        tetris: 0
+      },
+      playTime: 0
     };
   },
   computed: {
@@ -512,7 +514,9 @@ export default {
       // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
       this.field.data = JSON.parse(JSON.stringify(this.displayField));
       // ラインの削除
-      this.deleteLine();
+      const deleteLines = this.deleteLine();
+      // ゲームスコアの更新
+      this.updateScore(deleteLines);
       // 次のテトリミノを配置
       this.setTetorimino();
       this.dropDown();
@@ -581,6 +585,39 @@ export default {
         // this.flash(this.field, yLine);
         this.downLine(yLine);
       }
+      return yLineList;
+    },
+    /**
+     * スコアの取得
+     * @param  deleteLines 削除するライン
+     */
+    getScore(deleteLines) {
+      switch (deleteLines.length) {
+        case 1:
+          this.scoreData.score += 100 * this.scoreData.level;
+          break;
+        case 2:
+          this.scoreData.score += 300 * this.scoreData.level;
+          break;
+        case 3:
+          this.scoreData.score += 500 * this.scoreData.level;
+          break;
+        case 4:
+          this.scoreData.score += 800 * this.scoreData.level;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
+     * スコア情報の更新
+     */
+    updateScore(deleteLines) {
+      // SCOREの更新
+      this.getScore(deleteLines);
+      // LINEの更新
+      // LEVELの更新
+      // TETRISの更新
     }
   }
 };
