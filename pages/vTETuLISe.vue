@@ -8,11 +8,25 @@
           </div>
           <div class="gameInformation">
             <ul>
+              <div class="box playerBox">
+                <li class="playerNameTitle">
+                  PLAYER-NAME
+                </li>
+                <li class="scoreData playerName">
+                  player-name
+                </li>
+                <li class="gameTypeTitle">
+                  GAME-TYPE
+                </li>
+                <li class="scoreData gameType">
+                  NORMAL
+                </li>
+              </div>
               <div class="box scoreBox">
                 <li class="scoreTitle">
                   SCORE
                 </li>
-                <li class="count scoreCount">
+                <li class="scoreData scoreCount">
                   1234567890
                 </li>
               </div>
@@ -20,7 +34,7 @@
                 <li class="timeTitle">
                   TIME
                 </li>
-                <li class="count timeCount">
+                <li class="scoreData timeCount">
                   00:00:00
                 </li>
               </div>
@@ -28,7 +42,7 @@
                 <li class="lineTitle">
                   LINE:
                 </li>
-                <li class="count linesCount">
+                <li class="scoreData linesCount">
                   10
                 </li>
               </div>
@@ -36,15 +50,7 @@
                 <li class="levelTitle">
                   LEVEL:
                 </li>
-                <li class="count levelCount">
-                  00
-                </li>
-              </div>
-              <div class="box goalBox">
-                <li class="goalTitle">
-                  GOAL:
-                </li>
-                <li class="count goalCount">
+                <li class="scoreData levelCount">
                   00
                 </li>
               </div>
@@ -52,7 +58,7 @@
                 <li class="tetriseTitle">
                   TETRISES:
                 </li>
-                <li class="count tetrisesCount">
+                <li class="scoreData tetrisesCount">
                   00
                 </li>
               </div>
@@ -223,7 +229,15 @@ export default {
         type: 0
       },
       intervalId: undefined,
-      next: 0
+      player: {
+        name: '',
+        gameType: ''
+      },
+      score: 0,
+      playTime: 0,
+      deleteLines: 0,
+      level: 0,
+      tetris: 0
     };
   },
   computed: {
@@ -648,7 +662,7 @@ td.nextQueueTd {
   margin-bottom: 8px;
 }
 
-.count {
+.scoreData {
   font-weight: bold;
 }
 
