@@ -4,7 +4,27 @@
       <div class="field">
         <div class="left">
           <div class="queue holdQueue">
-            hold
+            <table class="holdQueueTable">
+              <tr class="holdQueueTr">
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+              </tr>
+              <tr
+                v-for="(line, i) in displayHoldBlock"
+                :key="i"
+                class="holdQueueTr"
+              >
+                <td
+                  v-for="(cell, j) in line"
+                  :key="j"
+                  class="holdBlock holdQueueTd"
+                  :class="cell | blockClass"
+                />
+              </tr>
+            </table>
           </div>
           <div class="gameInformation">
             <ul>
@@ -228,6 +248,9 @@ export default {
       nextBlock: {
         type: 0
       },
+      holdBlock: {
+        type: 0
+      },
       intervalId: undefined,
       player: {
         name: '',
@@ -266,9 +289,20 @@ export default {
       }
       return field;
     },
+    /**
+     * 次のテトリミノの表示
+     * @return ホールドしたテトリミノのタイプ
+     */
     displayNextBlock() {
       return tetrimino[this.nextBlock.type];
-    }
+    },
+    /**
+     * ホールドしたテトリミノの表示
+     * @return ホールドしたテトリミノのタイプ
+     */
+    displayHoldBlock() {
+      return tetrimino[this.holdBlock.type];
+    },
   },
   // ライフサイクル
   created() {
@@ -567,7 +601,8 @@ table {
   border-collapse: collapse;
 }
 
-table.nextQueueTable {
+table.nextQueueTable,
+table.holdQueueTable {
   border: 7px #626261 solid;
   border-collapse: collapse;
 }
@@ -580,7 +615,9 @@ td {
 }
 
 tr.nextQueueTr,
-td.nextQueueTd {
+td.nextQueueTd,
+tr.holdQueueTr,
+td.holdQueueTd {
   border: none;
   height: var(--next-block);
   min-width: var(--next-block);
@@ -610,7 +647,8 @@ td.nextQueueTd {
   background-color: white;
 }
 
-.nextBlock {
+.nextBlock,
+.holdBlock {
   width: var(--next-block);
   height: var(--next-block);
   background-color: white;
