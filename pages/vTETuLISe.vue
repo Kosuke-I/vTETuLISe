@@ -592,7 +592,13 @@ export default {
   --next-block: calc(100vh * 0.035);
 }
 
+ul {
+  padding-left: 0;
+  border-left: 3px #626261 solid;
+}
+
 li {
+  margin-left: 8px;
   list-style: none;
 }
 
@@ -651,7 +657,6 @@ td.holdQueueTd {
 .holdBlock {
   width: var(--next-block);
   height: var(--next-block);
-  background-color: white;
 }
 
 .tetrimino-i {
@@ -689,7 +694,7 @@ td.holdQueueTd {
 }
 
 .holdQueue {
-  margin-left: auto;
+  /* margin-left: auto; */
 }
 
 .gameInformation {
@@ -697,10 +702,13 @@ td.holdQueueTd {
 }
 
 .box {
-  margin-bottom: 8px;
+  margin-bottom: 1.5em;
+  font-size: 1.4em;
 }
 
 .scoreData {
+  text-align: right;
+  ;
   font-weight: bold;
 }
 
