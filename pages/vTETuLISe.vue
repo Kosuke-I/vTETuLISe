@@ -473,30 +473,67 @@ export default {
     getRandomBlock() {
       return Math.floor(Math.random() * 7) + 1;
     },
-    // ラインの削除
+    /**
+     * ラインの消滅
+     * @param  field フィールド
+     * @param  yLine lineのy軸座標
+     */
+    disappeal(field, yLine) {
+      // 一瞬で消える
+      for (let x = 0; x < this.field.x; x++) {
+        this.field.data[yLine][x] = 0;
+      }
+    },
+    /**
+     * ラインの表示
+     * @param  appealField 削除前フィールド
+     */
+    appeal(appealField) {
+      this.field = appealField;
+    },
+    // ラインの点滅
+    flash(field, yLine) {
+      const appealField = field;
+      this.disappeal(field, yLine);
+      setTimeout(() => {
+        this.appeal(appealField);
+      }, 5000);
+      setTimeout(() => {
+        this.disappeal(field, yLine);
+      }, 2000);
+    },
+    /**
+     * 一段下げる
+     * @param yLine lineのy軸座標
+     */
+    downLine(yLine) {
+      for (let h = yLine; h > 1; h--) {
+        this.field.data[h] = this.field.data[h - 1];
+      }
+    },
+    /**
+     * ラインの削除
+     */
     deleteLine() {
       //ライン消し判定
-      const lines = [];
+      const yLineList = [];
       for (let y = 0; y < this.field.y; y++) {
         let c = 1;
         for (let x = 0; x < this.field.x; x++) {
           c *= this.field.data[y][x];
         }
         if (c > 0) {
-          lines.push(y);
+          yLineList.push(y);
         }
       }
       //ライン消し
-      for (let i = 0; i < lines.length; i++) {
-        const l = lines[i];
-        for (let x = 0; x < this.field.x; x++) {
-          this.field.data[l][x] = 0;
-        }
-        for (let h = l; h > 1; h--) {
-          this.field.data[h] = this.field.data[h - 1];
-        }
+      for (let i = 0; i < yLineList.length; i++) {
+        const yLine = yLineList[i];
+        // TODO 点滅処理
+        // this.flash(this.field, yLine);
+        this.downLine(yLine);
       }
-    },
+    }
   }
 };
 </script>
