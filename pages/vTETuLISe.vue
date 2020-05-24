@@ -63,7 +63,7 @@
                   LINE:
                 </li>
                 <li class="scoreData linesCount">
-                  10
+                  {{ scoreData.deleteLines }}
                 </li>
               </div>
               <div class="box levelBox">
@@ -71,7 +71,7 @@
                   LEVEL:
                 </li>
                 <li class="scoreData levelCount">
-                  00
+                  {{ scoreData.level }}
                 </li>
               </div>
               <div class="box tetliseBox">
@@ -524,7 +524,7 @@ export default {
      * 一定間隔ごとにメソッドを実行
      */
     dropDown() {
-      this.intervalId = setInterval(this.softDrop, 1000);
+      this.intervalId = setInterval(this.softDrop, 1000 * Math.pow((0.8 - (this.scoreData.level - 1) * 0.007), (this.scoreData.level - 1)));
     },
     /**
      * 自動落下の停止
@@ -633,6 +633,8 @@ export default {
         // this.flash(this.field, yLine);
         this.downLine(yLine);
       }
+      // 削除するライン数の加算
+      this.scoreData.deleteLines += yLineList.length;
       return yLineList;
     },
     /**
@@ -682,6 +684,12 @@ export default {
       this.setStartTime(this.time.diffTime);
       this.time.intervalId = setInterval(this.progressTime, 1000);
     },
+    updateLevel() {
+      if (this.scoreData.deleteLines > (this.scoreData.level + 1) * 10) {
+        this.scoreData.level += 1;
+      }
+      return;
+    },
     /**
      * スコア情報の更新
      */
@@ -690,6 +698,7 @@ export default {
       this.getScore(deleteLines);
       // LINEの更新
       // LEVELの更新
+      this.updateLevel();
       // TETRISの更新
     }
   }
