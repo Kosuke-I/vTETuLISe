@@ -47,7 +47,7 @@
                   SCORE
                 </li>
                 <li class="scoreData scoreCount">
-                  {{ scoreData.score }}
+                  {{ displayScore }}
                 </li>
               </div>
               <div class="box timeBox">
@@ -55,7 +55,7 @@
                   TIME
                 </li>
                 <li class="scoreData timeCount">
-                  00:00:00
+                  {{ displayPlayTime }}
                 </li>
               </div>
               <div class="box lineBox">
@@ -262,7 +262,7 @@ export default {
         level: 1,
         tetris: 0
       },
-      playTime: 0
+      playTime: '00:00:00'
     };
   },
   computed: {
@@ -305,6 +305,13 @@ export default {
     displayHoldBlock() {
       return tetrimino[this.holdBlock.type];
     },
+    /**
+     * スコアの表示
+     * @return スコア
+     */
+    displayScore() {
+      return this.scoreData.score;
+    }
   },
   // ライフサイクル
   created() {
