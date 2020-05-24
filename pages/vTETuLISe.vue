@@ -55,7 +55,7 @@
                   TIME
                 </li>
                 <li class="scoreData timeCount">
-                  {{ displayPlayTime }}
+                  {{ checkHours | zeroPadding }}：{{ checkMinutes | zeroPadding }}：{{ checkSeconds | zeroPadding }}
                 </li>
               </div>
               <div class="box lineBox">
@@ -208,6 +208,11 @@ const tetrimino = {
 };
 export default {
   filters: {
+    /**
+     * テトリミノの種類判別クラス付与
+     * @param  val テトリミノタイプ
+     * @return テトリミノクラス
+     */
     blockClass(val) {
       switch (val) {
         case 1:
@@ -227,6 +232,14 @@ export default {
         default:
           return '';
       }
+    },
+    /**
+     * プレイ時間のゼロ埋め
+     * @param  value 時間
+     * @return ゼロ埋めした時間
+     */
+    zeroPadding(value) {
+      return value.toString().padStart(2, 0);
     }
   },
   data: function() {
@@ -262,7 +275,13 @@ export default {
         level: 1,
         tetris: 0
       },
-      playTime: '00:00:00'
+      time: {
+        playTime: 0,
+        endTime: 0,
+        diffTime: 0,
+        intervalId: 0,
+        isRunning: false
+      }
     };
   },
   computed: {
@@ -311,7 +330,28 @@ export default {
      */
     displayScore() {
       return this.scoreData.score;
-    }
+    },
+    /**
+     * '時'の表示
+     * @return 時
+     */
+    checkHours() {
+      return Math.floor(this.time.diffTime / 1000 / 60 / 60);
+    },
+    /**
+     * '分'の表示
+     * @return 分
+     */
+    checkMinutes() {
+      return Math.floor(this.time.diffTime / 1000 / 60) % 60;
+    },
+    /**
+     * '秒'の表示
+     * @return 秒
+     */
+    checkSeconds() {
+      return Math.floor(this.time.diffTime / 1000) % 60;
+    },
   },
   // ライフサイクル
   created() {
@@ -340,6 +380,7 @@ export default {
       this.block.type = this.getRandomBlock();
       this.nextBlock.type = this.getRandomBlock();
       this.setBlock();
+      this.timeStart();
       this.dropDown();
       document.activeElement.blur();
     },
@@ -615,6 +656,31 @@ export default {
         default:
           break;
       }
+    },
+    /**
+     * タイマースタート
+     * @param time 時間
+     */
+    setStartTime(time) {
+      this.time.playTime = performance.now() - time;
+    },
+    /**
+     * プレイ時間
+     */
+    progressTime() {
+      this.time.endTime = performance.now();
+      this.time.diffTime = this.time.endTime - this.time.playTime;
+    },
+    /**
+     * プレイ時間の計測開始
+     */
+    timeStart() {
+      if (this.time.isRunning) {
+        return false;
+      }
+      this.time.isRunning = true;
+      this.setStartTime(this.time.diffTime);
+      this.time.intervalId = setInterval(this.progressTime, 1000);
     },
     /**
      * スコア情報の更新
