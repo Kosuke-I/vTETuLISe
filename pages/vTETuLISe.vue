@@ -4,55 +4,81 @@
       <div class="field">
         <div class="left">
           <div class="queue holdQueue">
-            hold
+            <table class="holdQueueTable">
+              <tr class="holdQueueTr">
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+                <td class="holdBlock holdQueueTd" />
+              </tr>
+              <tr
+                v-for="(line, i) in displayHoldBlock"
+                :key="i"
+                class="holdQueueTr"
+              >
+                <td
+                  v-for="(cell, j) in line"
+                  :key="j"
+                  class="holdBlock holdQueueTd"
+                  :class="cell | blockClass"
+                />
+              </tr>
+            </table>
           </div>
           <div class="gameInformation">
             <ul>
+              <div class="box playerBox">
+                <li class="playerNameTitle">
+                  PLAYER-NAME
+                </li>
+                <li class="scoreData playerName">
+                  player-name
+                </li>
+                <li class="gameTypeTitle">
+                  GAME-TYPE
+                </li>
+                <li class="scoreData gameType">
+                  NORMAL
+                </li>
+              </div>
               <div class="box scoreBox">
                 <li class="scoreTitle">
                   SCORE
                 </li>
-                <li class="count scoreCount">
-                  1234567890
+                <li class="scoreData scoreCount">
+                  {{ displayScore }}
                 </li>
               </div>
               <div class="box timeBox">
                 <li class="timeTitle">
                   TIME
                 </li>
-                <li class="count timeCount">
-                  00:00:00
+                <li class="scoreData timeCount">
+                  {{ checkHours | zeroPadding }}：{{ checkMinutes | zeroPadding }}：{{ checkSeconds | zeroPadding }}
                 </li>
               </div>
               <div class="box lineBox">
                 <li class="lineTitle">
                   LINE:
                 </li>
-                <li class="count linesCount">
-                  10
+                <li class="scoreData linesCount">
+                  {{ scoreData.deleteLines }}
                 </li>
               </div>
               <div class="box levelBox">
                 <li class="levelTitle">
                   LEVEL:
                 </li>
-                <li class="count levelCount">
-                  00
-                </li>
-              </div>
-              <div class="box goalBox">
-                <li class="goalTitle">
-                  GOAL:
-                </li>
-                <li class="count goalCount">
-                  00
+                <li class="scoreData levelCount">
+                  {{ scoreData.level }}
                 </li>
               </div>
               <div class="box tetliseBox">
                 <li class="tetriseTitle">
                   TETRISES:
                 </li>
-                <li class="count tetrisesCount">
+                <li class="scoreData tetrisesCount">
                   00
                 </li>
               </div>
@@ -134,8 +160,8 @@ const tetrimino = {
   // O Tetrimino
   2: [
     [0, 0, 0, 0, 0],
-    [0, 2, 2, 0, 0],
-    [0, 2, 2, 0, 0],
+    [0, 0, 2, 2, 0],
+    [0, 0, 2, 2, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
   ],
@@ -182,6 +208,11 @@ const tetrimino = {
 };
 export default {
   filters: {
+    /**
+     * テトリミノの種類判別クラス付与
+     * @param  val テトリミノタイプ
+     * @return テトリミノクラス
+     */
     blockClass(val) {
       switch (val) {
         case 1:
@@ -201,6 +232,14 @@ export default {
         default:
           return '';
       }
+    },
+    /**
+     * プレイ時間のゼロ埋め
+     * @param  value 時間
+     * @return ゼロ埋めした時間
+     */
+    zeroPadding(value) {
+      return value.toString().padStart(2, 0);
     }
   },
   data: function() {
@@ -222,8 +261,27 @@ export default {
       nextBlock: {
         type: 0
       },
+      holdBlock: {
+        type: 0
+      },
       intervalId: undefined,
-      next: 0
+      player: {
+        name: '',
+        gameType: ''
+      },
+      scoreData: {
+        score: 0,
+        deleteLines: 0,
+        level: 1,
+        tetris: 0
+      },
+      time: {
+        playTime: 0,
+        endTime: 0,
+        diffTime: 0,
+        intervalId: 0,
+        isRunning: false
+      }
     };
   },
   computed: {
@@ -252,9 +310,48 @@ export default {
       }
       return field;
     },
+    /**
+     * 次のテトリミノの表示
+     * @return ホールドしたテトリミノのタイプ
+     */
     displayNextBlock() {
       return tetrimino[this.nextBlock.type];
-    }
+    },
+    /**
+     * ホールドしたテトリミノの表示
+     * @return ホールドしたテトリミノのタイプ
+     */
+    displayHoldBlock() {
+      return tetrimino[this.holdBlock.type];
+    },
+    /**
+     * スコアの表示
+     * @return スコア
+     */
+    displayScore() {
+      return this.scoreData.score;
+    },
+    /**
+     * '時'の表示
+     * @return 時
+     */
+    checkHours() {
+      return Math.floor(this.time.diffTime / 1000 / 60 / 60);
+    },
+    /**
+     * '分'の表示
+     * @return 分
+     */
+    checkMinutes() {
+      return Math.floor(this.time.diffTime / 1000 / 60) % 60;
+    },
+    /**
+     * '秒'の表示
+     * @return 秒
+     */
+    checkSeconds() {
+      return Math.floor(this.time.diffTime / 1000) % 60;
+    },
   },
   // ライフサイクル
   created() {
@@ -283,6 +380,7 @@ export default {
       this.block.type = this.getRandomBlock();
       this.nextBlock.type = this.getRandomBlock();
       this.setBlock();
+      this.timeStart();
       this.dropDown();
       document.activeElement.blur();
     },
@@ -426,7 +524,7 @@ export default {
      * 一定間隔ごとにメソッドを実行
      */
     dropDown() {
-      this.intervalId = setInterval(this.softDrop, 1000);
+      this.intervalId = setInterval(this.softDrop, 1000 * Math.pow((0.8 - (this.scoreData.level - 1) * 0.007), (this.scoreData.level - 1)));
     },
     /**
      * 自動落下の停止
@@ -464,7 +562,9 @@ export default {
       // 最下端にたどり着いたら、フィールドの更新とIntervalIDの破棄
       this.field.data = JSON.parse(JSON.stringify(this.displayField));
       // ラインの削除
-      this.deleteLine();
+      const deleteLines = this.deleteLine();
+      // ゲームスコアの更新
+      this.updateScore(deleteLines);
       // 次のテトリミノを配置
       this.setTetorimino();
       this.dropDown();
@@ -533,6 +633,73 @@ export default {
         // this.flash(this.field, yLine);
         this.downLine(yLine);
       }
+      // 削除するライン数の加算
+      this.scoreData.deleteLines += yLineList.length;
+      return yLineList;
+    },
+    /**
+     * スコアの取得
+     * @param  deleteLines 削除するライン
+     */
+    getScore(deleteLines) {
+      switch (deleteLines.length) {
+        case 1:
+          this.scoreData.score += 100 * this.scoreData.level;
+          break;
+        case 2:
+          this.scoreData.score += 300 * this.scoreData.level;
+          break;
+        case 3:
+          this.scoreData.score += 500 * this.scoreData.level;
+          break;
+        case 4:
+          this.scoreData.score += 800 * this.scoreData.level;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
+     * タイマースタート
+     * @param time 時間
+     */
+    setStartTime(time) {
+      this.time.playTime = performance.now() - time;
+    },
+    /**
+     * プレイ時間
+     */
+    progressTime() {
+      this.time.endTime = performance.now();
+      this.time.diffTime = this.time.endTime - this.time.playTime;
+    },
+    /**
+     * プレイ時間の計測開始
+     */
+    timeStart() {
+      if (this.time.isRunning) {
+        return false;
+      }
+      this.time.isRunning = true;
+      this.setStartTime(this.time.diffTime);
+      this.time.intervalId = setInterval(this.progressTime, 1000);
+    },
+    updateLevel() {
+      if (this.scoreData.deleteLines > (this.scoreData.level + 1) * 10) {
+        this.scoreData.level += 1;
+      }
+      return;
+    },
+    /**
+     * スコア情報の更新
+     */
+    updateScore(deleteLines) {
+      // SCOREの更新
+      this.getScore(deleteLines);
+      // LINEの更新
+      // LEVELの更新
+      this.updateLevel();
+      // TETRISの更新
     }
   }
 };
@@ -544,7 +711,13 @@ export default {
   --next-block: calc(100vh * 0.035);
 }
 
+ul {
+  padding-left: 0;
+  border-left: 3px #626261 solid;
+}
+
 li {
+  margin-left: 8px;
   list-style: none;
 }
 
@@ -553,7 +726,8 @@ table {
   border-collapse: collapse;
 }
 
-table.nextQueueTable {
+table.nextQueueTable,
+table.holdQueueTable {
   border: 7px #626261 solid;
   border-collapse: collapse;
 }
@@ -566,7 +740,9 @@ td {
 }
 
 tr.nextQueueTr,
-td.nextQueueTd {
+td.nextQueueTd,
+tr.holdQueueTr,
+td.holdQueueTd {
   border: none;
   height: var(--next-block);
   min-width: var(--next-block);
@@ -596,10 +772,10 @@ td.nextQueueTd {
   background-color: white;
 }
 
-.nextBlock {
+.nextBlock,
+.holdBlock {
   width: var(--next-block);
   height: var(--next-block);
-  background-color: white;
 }
 
 .tetrimino-i {
@@ -637,7 +813,7 @@ td.nextQueueTd {
 }
 
 .holdQueue {
-  margin-left: auto;
+  /* margin-left: auto; */
 }
 
 .gameInformation {
@@ -645,10 +821,13 @@ td.nextQueueTd {
 }
 
 .box {
-  margin-bottom: 8px;
+  margin-bottom: 1.5em;
+  font-size: 1.4em;
 }
 
-.count {
+.scoreData {
+  text-align: right;
+  ;
   font-weight: bold;
 }
 
