@@ -12,11 +12,7 @@
                 <td class="holdBlock holdQueueTd" />
                 <td class="holdBlock holdQueueTd" />
               </tr>
-              <tr
-                v-for="(line, i) in displayHoldBlock"
-                :key="i"
-                class="holdQueueTr"
-              >
+              <tr v-for="(line, i) in displayHoldBlock" :key="i" class="holdQueueTr">
                 <td
                   v-for="(cell, j) in line"
                   :key="j"
@@ -29,58 +25,32 @@
           <div class="gameInformation">
             <ul>
               <div class="box playerBox">
-                <li class="playerNameTitle">
-                  PLAYER-NAME
-                </li>
-                <li class="scoreData playerName">
-                  player-name
-                </li>
-                <li class="gameTypeTitle">
-                  GAME-TYPE
-                </li>
-                <li class="scoreData gameType">
-                  NORMAL
-                </li>
+                <li class="playerNameTitle">PLAYER-NAME</li>
+                <li class="scoreData playerName">player-name</li>
+                <li class="gameTypeTitle">GAME-TYPE</li>
+                <li class="scoreData gameType">NORMAL</li>
               </div>
               <div class="box scoreBox">
-                <li class="scoreTitle">
-                  SCORE
-                </li>
-                <li class="scoreData scoreCount">
-                  {{ displayScore }}
-                </li>
+                <li class="scoreTitle">SCORE</li>
+                <li class="scoreData scoreCount">{{ displayScore }}</li>
               </div>
               <div class="box timeBox">
-                <li class="timeTitle">
-                  TIME
-                </li>
-                <li class="scoreData timeCount">
-                  {{ checkHours | zeroPadding }}：{{ checkMinutes | zeroPadding }}：{{ checkSeconds | zeroPadding }}
-                </li>
+                <li class="timeTitle">TIME</li>
+                <li
+                  class="scoreData timeCount"
+                >{{ checkHours | zeroPadding }}：{{ checkMinutes | zeroPadding }}：{{ checkSeconds | zeroPadding }}</li>
               </div>
               <div class="box lineBox">
-                <li class="lineTitle">
-                  LINE:
-                </li>
-                <li class="scoreData linesCount">
-                  {{ scoreData.deleteLines }}
-                </li>
+                <li class="lineTitle">LINE:</li>
+                <li class="scoreData linesCount">{{ scoreData.deleteLines }}</li>
               </div>
               <div class="box levelBox">
-                <li class="levelTitle">
-                  LEVEL:
-                </li>
-                <li class="scoreData levelCount">
-                  {{ scoreData.level }}
-                </li>
+                <li class="levelTitle">LEVEL:</li>
+                <li class="scoreData levelCount">{{ scoreData.level }}</li>
               </div>
               <div class="box tetliseBox">
-                <li class="tetriseTitle">
-                  TETRISES:
-                </li>
-                <li class="scoreData tetrisesCount">
-                  00
-                </li>
+                <li class="tetriseTitle">TETRISES:</li>
+                <li class="scoreData tetrisesCount">00</li>
               </div>
             </ul>
           </div>
@@ -88,23 +58,13 @@
         <div class="center">
           <div class="matrix">
             <table>
-              <tr
-                v-for="(line, i) in displayField"
-                :key="i"
-              >
+              <tr v-for="(line, i) in displayField" :key="i">
                 <!-- mustaches展開 -->
-                <td
-                  v-for="(cell, j) in line"
-                  :key="j"
-                  class="block"
-                  :class="cell | blockClass"
-                />
+                <td v-for="(cell, j) in line" :key="j" class="block" :class="cell | blockClass" />
               </tr>
             </table>
           </div>
-          <button @click="start">
-            start
-          </button>
+          <button @click="start">start</button>
         </div>
         <div class="right">
           <div class="queue nextQueue">
@@ -116,11 +76,7 @@
                 <td class="nextBlock nextQueueTd" />
                 <td class="nextBlock nextQueueTd" />
               </tr>
-              <tr
-                v-for="(line, i) in displayNextBlock"
-                :key="i"
-                class="nextQueueTr"
-              >
+              <tr v-for="(line, i) in displayNextBlock" :key="i" class="nextQueueTr">
                 <td
                   v-for="(cell, j) in line"
                   :key="j"
@@ -130,9 +86,7 @@
               </tr>
             </table>
           </div>
-          <div class="queue afterQueue">
-            afterQueue
-          </div>
+          <div class="queue afterQueue">afterQueue</div>
         </div>
       </div>
     </div>
@@ -216,21 +170,21 @@ export default {
     blockClass(val) {
       switch (val) {
         case 1:
-          return 'tetrimino-i';
+          return "tetrimino-i";
         case 2:
-          return 'tetrimino-o';
+          return "tetrimino-o";
         case 3:
-          return 'tetrimino-t';
+          return "tetrimino-t";
         case 4:
-          return 'tetrimino-j';
+          return "tetrimino-j";
         case 5:
-          return 'tetrimino-l';
+          return "tetrimino-l";
         case 6:
-          return 'tetrimino-s';
+          return "tetrimino-s";
         case 7:
-          return 'tetrimino-z';
+          return "tetrimino-z";
         default:
-          return '';
+          return "";
       }
     },
     /**
@@ -266,8 +220,8 @@ export default {
       },
       intervalId: undefined,
       player: {
-        name: '',
-        gameType: ''
+        name: "",
+        gameType: ""
       },
       scoreData: {
         score: 0,
@@ -281,6 +235,11 @@ export default {
         diffTime: 0,
         intervalId: 0,
         isRunning: false
+      },
+      bgm: {
+        isPlaying: false,
+        isStopping: true,
+        pauseTime: 0
       }
     };
   },
@@ -351,17 +310,17 @@ export default {
      */
     checkSeconds() {
       return Math.floor(this.time.diffTime / 1000) % 60;
-    },
+    }
   },
   // ライフサイクル
   created() {
     this.clear();
   },
   mounted() {
-    window.addEventListener('keydown', this.handleKeydown);
+    window.addEventListener("keydown", this.handleKeydown);
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this.handleKeydown);
+    window.removeEventListener("keydown", this.handleKeydown);
   },
   // メソッド
   methods: {
@@ -369,7 +328,9 @@ export default {
      * 初期化
      */
     clear() {
-      this.field.data = [...Array(this.field.y)].map(() => Array(this.field.x).fill(0));
+      this.field.data = [...Array(this.field.y)].map(() =>
+        Array(this.field.x).fill(0)
+      );
       this.stopDropDown();
     },
     /**
@@ -381,6 +342,7 @@ export default {
       this.nextBlock.type = this.getRandomBlock();
       this.setBlock();
       this.timeStart();
+      this.startBgm();
       this.dropDown();
       document.activeElement.blur();
     },
@@ -419,7 +381,12 @@ export default {
             return false;
           }
           //ボード外の座標は無視
-          if (x + v < 0 || x + v > this.field.x - 1 || y + h > this.field.y - 1 || y + h < 0) {
+          if (
+            x + v < 0 ||
+            x + v > this.field.x - 1 ||
+            y + h > this.field.y - 1 ||
+            y + h < 0
+          ) {
             continue;
           }
           //ブロック判定
@@ -482,7 +449,9 @@ export default {
       const rotatedTetrimino = JSON.parse(JSON.stringify(this.block.data));
       for (let h = 0; h < rotatedTetrimino.length; h++) {
         for (let v = 0; v < rotatedTetrimino[h].length; v++) {
-          rotatedTetrimino[rotatedTetrimino.length - v - 1][h] = this.block.data[h][v];
+          rotatedTetrimino[rotatedTetrimino.length - v - 1][
+            h
+          ] = this.block.data[h][v];
         }
       }
 
@@ -524,7 +493,14 @@ export default {
      * 一定間隔ごとにメソッドを実行
      */
     dropDown() {
-      this.intervalId = setInterval(this.softDrop, 1000 * Math.pow((0.8 - (this.scoreData.level - 1) * 0.007), (this.scoreData.level - 1)));
+      this.intervalId = setInterval(
+        this.softDrop,
+        1000 *
+          Math.pow(
+            0.8 - (this.scoreData.level - 1) * 0.007,
+            this.scoreData.level - 1
+          )
+      );
     },
     /**
      * 自動落下の停止
@@ -700,6 +676,77 @@ export default {
       // LEVELの更新
       this.updateLevel();
       // TETRISの更新
+    },
+    /**
+     * AudioBufferの取得
+     * @param  context AudioContext
+     * @param  fn      関数
+     * @param  url     url
+     */
+    getAudioBuffer(context, url, fn) {
+      const request = new XMLHttpRequest();
+      request.responseType = "arraybuffer";
+      request.onreadystatechange = function() {
+        // XMLHttpRequestの処置が完了しているか
+        if (request.readyState === 4) {
+          //レスポンスのステータスを確認
+          // 200はリクエストに成功
+          console.log(request.response);
+          if (request.status === 0 || request.status === 200) {
+            context.decodeAudioData(request.response, function(buffer) {
+              fn(buffer);
+            });
+          }
+        }
+      };
+      request.open("GET", url, true);
+      request.send("");
+    },
+    startBgm() {
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      const context = new AudioContext();
+      // context.createGain = context.createGain || context.createGainNode;
+
+      const bgmSource = "../bgm/TheNoisemakerIsBack(IntroMix).mp3";
+
+      this.getAudioBuffer(context, bgmSource, function(buffer) {
+        context.resume().then(function() {
+          // const volumeControl = context.createGain();
+          const source = context.createBufferSource();
+
+          source.buffer = buffer;
+          source.stop = source.stop || source.noteOff;
+
+          // ボリュームコントロールと出力点を接続
+          // volumeControl.connect(context.destination);
+          // source.connect(volumeControl);
+
+          source.connect(context.destination);
+
+          // 音の再生
+          source.start(0);
+
+          // 再生が終了した際の処理
+          source.onended = function() {
+            // contextの時間経過を停止
+            context.suspend().then(function() {
+              if (!this.bgm.pausing) {
+                if (!this.bgm.stopping) {
+                  this.startBgm();
+                }
+              }
+            });
+          };
+        });
+      });
+    },
+    finishedLoading(context, bufferList) {
+      // Create two sources and play them both together.
+      const source = context.createBufferSource();
+      source.buffer = bufferList[0];
+
+      source.connect(context.destination);
+      source.start(0);
     }
   }
 };
@@ -751,7 +798,7 @@ td.holdQueueTd {
 .display {
   height: 100vh;
   width: 100vw;
-  background-color: #B2B3B2;
+  background-color: #b2b3b2;
 }
 
 .field {
@@ -827,7 +874,6 @@ td.holdQueueTd {
 
 .scoreData {
   text-align: right;
-  ;
   font-weight: bold;
 }
 
