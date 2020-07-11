@@ -703,6 +703,8 @@ export default {
       request.send("");
     },
     startBgm() {
+      // TODO BGMリストlistNumberを別に作り、startBgm()の引数に指定して曲の再生が終了した時
+      // TODO 自動的に次の音楽が流れるようにする
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
       const context = new AudioContext();
       // context.createGain = context.createGain || context.createGainNode;
@@ -739,14 +741,6 @@ export default {
           };
         });
       });
-    },
-    finishedLoading(context, bufferList) {
-      // Create two sources and play them both together.
-      const source = context.createBufferSource();
-      source.buffer = bufferList[0];
-
-      source.connect(context.destination);
-      source.start(0);
     }
   }
 };
